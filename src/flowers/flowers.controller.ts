@@ -7,6 +7,8 @@ import {
     Query,
     UseGuards,
     UseInterceptors,
+    UsePipes,
+    ValidationPipe,
 } from '@nestjs/common';
 import { FlowersService } from './flowers.service';
 import { LoggingInterceptor } from 'src/conception/interceptor';
@@ -27,6 +29,7 @@ export class FlowersController {
 
     @Post()
     @UseGuards(AuthGuard)
+    @UsePipes(new ValidationPipe())
     create(@Body() dto: CreateFlowersDto) {
         return this.flowersService.create(dto);
     }
