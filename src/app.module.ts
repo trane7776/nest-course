@@ -7,6 +7,11 @@ import { MicroserviceModule } from './microservice/microservice.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { join } from 'path';
+import { FlowersGraphqlModule } from './flowers-graphql/flowers-graphql.module';
+import { WebsocketGateway } from './websocket.gateway';
 
 @Module({
     imports: [
@@ -25,9 +30,15 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
                 },
             },
         ]),
+        GraphQLModule.forRoot<ApolloDriverConfig>({
+            driver: ApolloDriver,
+            autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+            sortSchema: true,
+        }),
+        FlowersGraphqlModule,
     ],
     controllers: [AppController],
-    providers: [AppService],
+    providers: [AppService, WebsocketGateway],
 })
 export class AppModule implements NestModule {
     configure(consumer: MiddlewareConsumer) {
